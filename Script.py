@@ -59,9 +59,21 @@ First Send /clone command then follow below steps.
 
 ᴛʜᴇɴ ɪ ᴀᴍ ᴛʀʏ ᴛᴏ ᴄʀᴇᴀᴛᴇ ᴀ ᴄᴏᴘʏ ʙᴏᴛ ᴏғ ᴍᴇ ғᴏʀ ʏᴏᴜ ᴏɴʟʏ 😌</b>"""
 
-    HELP_TXT = """<b><u>💢 HOW TO USE THE BOT ☺️</u>
+HELP_TXT = """<b><u>💢 HOW TO USE THE BOT ☺️</u></b>
 
-🔻 /link - ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴠɪᴅᴇᴏ ᴏʀ ғɪʟᴇ ᴛᴏ ɢᴇᴛ sʜᴀʀᴀʙʟᴇ ʟɪɴᴋ
+🔻 <code>/link</code> - Reply to a video or file to get sharable link.
 
-🔻 /batch - sᴇɴᴅ ғɪʀsᴛ ʟɪɴᴋ ᴏғ ғɪʟᴇ sᴛᴏʀᴇ ᴄʜᴀɴɴᴇʟ ᴘᴏsᴛ ᴛʜᴇɴ ʟᴀsᴛ ᴘᴏsᴛ ʟɪɴᴋ ᴀɴᴅ ᴍᴀᴋᴇ sᴜʀᴇ ʙᴏᴛ ɪs ᴀᴅᴍɪɴ ɪɴ ʏᴏᴜʀ ғɪʟᴇ sᴛᴏʀᴇ ᴄʜᴀɴɴᴇʟ.
-ᴇx - /batch https://t.me/vj_botz/25 https://t.me/vj_botz/30
+🔻 <code>/batch</code> - Send first post link and last post link of file store channel.
+Make sure bot is admin in that channel.
+Example: /batch https://t.me/yourchannel/25 https://t.me/yourchannel/30
+
+➠ Send <code>/newbot</code> to @BotFather  
+➠ Give a name for your bot.  
+➠ Give a unique username.  
+➠ Then you will get a message with your bot token.  
+➠ Forward that message to me.
+
+Then I will try to create a copy bot of me for you only 😌
+"""
+
+
