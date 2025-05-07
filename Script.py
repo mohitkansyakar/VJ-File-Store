@@ -1,77 +1,79 @@
-class script(object):
-    START_TXT = """<b>Hello {}, I'm {} 👋</b>
-    
-<b>I'm an advanced file store bot with these features:</b>
-- File storage & sharing
-- Clone bot creation
-- Stream/download links
-- URL shortener support
-- Auto delete
-- Smooth UI</b>"""
+# Don't Remove Credit @VJ_Botz
+# Subscribe YouTube Channel For Amazing Bot @Tech_VJ
+# Ask Doubt on telegram @KingVJ01
 
-    CAPTION = """<b>📂 File Name: {file_name}
+import sys
+import glob
+import importlib
+from pathlib import Path
+from pyrogram import idle
+import logging
+import logging.config
 
-⚙️ Size: {file_size}</b>"""
+# Get logging configurations
+logging.config.fileConfig('logging.conf')
+logging.getLogger().setLevel(logging.INFO)
+logging.getLogger("pyrogram").setLevel(logging.ERROR)
 
-    SHORTENER_API_MESSAGE = """<b>To add/update your Shortener API:</b>
+from pyrogram import Client, __version__
+from pyrogram.raw.all import layer
+from config import LOG_CHANNEL, ON_HEROKU, CLONE_MODE, PORT
+from typing import Union, Optional, AsyncGenerator
+from pyrogram import types
+from Script import script 
+from datetime import date, datetime 
+import pytz
+from aiohttp import web
+from TechVJ.server import web_server
 
-<code>/api your_api_key</code>
+import asyncio
+from pyrogram import idle
+from plugins.clone import restart_bots
+from TechVJ.bot import StreamBot
+from TechVJ.utils.keepalive import ping_server
+from TechVJ.bot.clients import initialize_clients
 
-<b>Current Website:</b> {base_site}
-<b>Current API:</b> <code>{shortener_api}</code>
+ppath = "plugins/*.py"
+files = glob.glob(ppath)
+StreamBot.start()
+loop = asyncio.get_event_loop()
 
-<b>To remove API:</b> <code>/api None</code>"""
+async def start():
+    print('\n')
+    print('Initalizing Tech VJ Bot')
+    bot_info = await StreamBot.get_me()
+    StreamBot.username = bot_info.username
+    await initialize_clients()
+    for name in files:
+        with open(name) as a:
+            patt = Path(a.name)
+            plugin_name = patt.stem.replace(".py", "")
+            plugins_dir = Path(f"plugins/{plugin_name}.py")
+            import_path = "plugins.{}".format(plugin_name)
+            spec = importlib.util.spec_from_file_location(import_path, plugins_dir)
+            load = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(load)
+            sys.modules["plugins." + plugin_name] = load
+            print("Tech VJ Imported => " + plugin_name)
+    if ON_HEROKU:
+        asyncio.create_task(ping_server())
+    me = await StreamBot.get_me()
+    tz = pytz.timezone('Asia/Kolkata')
+    today = date.today()
+    now = datetime.now(tz)
+    time = now.strftime("%H:%M:%S %p")
+    app = web.AppRunner(await web_server())
+    await StreamBot.send_message(chat_id=LOG_CHANNEL, text=script.RESTART_TXT.format(today, time))
+    await app.setup()
+    bind_address = "0.0.0.0"
+    await web.TCPSite(app, bind_address, PORT).start()
+    if CLONE_MODE == True:
+        await restart_bots()
+    print("Bot Started Powered By @VJ_Botz")
+    await idle()
 
-    CLONE_START_TXT = """<b>Hello {}, I'm {} 👋</b>
-
-<b>I'm a file store bot with clone feature.</b>
-
-To create your own clone bot, use /clone command."""
-
-    ABOUT_TXT = """<b>🤖 Bot Name: {}</b>
-
-<b>📝 Language:</b> <a href="https://www.python.org">Python 3</a>
-<b>📚 Library:</b> <a href="https://docs.pyrogram.org">Pyrogram</a>
-<b>🧑‍💻 Developer:</b> <a href="tg://user?id={}">Click Here</a>"""
-
-    CABOUT_TXT = """<b>🤖 Bot Name: {}</b>
-
-<b>📝 Language:</b> Python 3
-<b>📚 Library:</b> Pyrogram
-<b>🧑‍💻 Developer:</b> <a href="tg://user?id={}">Click Here</a>"""
-
-    CLONE_TXT = """<b>Clone Bot Creation:</b>
-
-1. Send <code>/newbot</code> to @BotFather
-2. Choose a name & username
-3. Get your bot token
-4. Forward the token to me
-5. I'll create your clone bot"""
-
-    HELP_TXT = """<b>Available Commands:</b>
-
-🔹 /link - Get shareable file link
-🔹 /batch - Create batch links
-🔹 /clone - Create clone bot
-🔹 /base_site - Set URL shortener domain
-🔹 /api - Set shortener API key
-🔹 /deletecloned - Delete clone bot
-🔹 /broadcast - Broadcast message (Owner only)"""
-
-    CHELP_TXT = """<b>Basic Commands:</b>
-
-🔹 /link - Get file link
-🔹 /base_site - Set shortener domain
-🔹 /api - Set API key
-🔹 /broadcast - Broadcast message"""
-
-    LOG_TEXT = """<b>New User:</b>
-
-ID: <code>{}</code>
-Name: {}"""
-
-    RESTART_TXT = """<b>Bot Restarted</b>
-
-📅 Date: <code>{}</code>
-⏰ Time: <code>{}</code>
-🌐 Timezone: <code>Asia/Kolkata</code>"""
+if __name__ == '__main__':
+    try:
+        loop.run_until_complete(start())
+    except KeyboardInterrupt:
+        logging.info('Service Stopped Bye 👋')
